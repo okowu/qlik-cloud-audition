@@ -1,0 +1,97 @@
+import org.springframework.boot.gradle.tasks.run.BootRun
+
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.3.0'
+	id 'io.spring.dependency-management' version '1.1.5'
+	id 'com.diffplug.spotless' version '6.25.0'
+	id 'com.google.cloud.tools.jib' version '3.4.0'
+}
+
+group = 'com.cloud.audition'
+version = '0.0.1-SNAPSHOT'
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+// Linter configuration
+spotless {
+	java {
+		googleJavaFormat()
+		target '**/*.java'
+		targetExclude '.gradle/**', 'build/**'
+	}
+}
+
+
+repositories {
+	mavenCentral()
+}
+
+jib {
+	from {
+		image = 'openjdk:21'
+	}
+	to {
+		image = 'registry.hub.docker.com/oscarkowu/qlickcloudaudition'
+	}
+	container {
+		jvmFlags = [
+				'-XX:MinRAMPercentage=25.0',
+				'-XX:MaxRAMPercentage=90.0',
+				'-Djava.security.egd=file:/dev/./urandom'
+		]
+		mainClass = 'com.cloud.audition.qlikcloudaudition.QlikCloudAuditionApplication'
+	}
+}
+
+dependencies {
+	// Base
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.hibernate.validator:hibernate-validator'
+
+	implementation 'org.zalando:problem-spring-web:0.29.1'
+	implementation 'org.zalando:jackson-datatype-problem:0.27.1'
+
+	// Database Migration
+	implementation 'org.liquibase:liquibase-core'
+	implementation 'net.lbruun.springboot:preliquibase-spring-boot-starter:1.5.0'
+
+	// Database
+	implementation 'com.mysql:mysql-connector-j:8.4.0'
+
+	// Code Utility
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+
+	// Documentation
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
+
+	// Test
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.boot:spring-boot-testcontainers'
+	testImplementation 'io.rest-assured:rest-assured'
+	testImplementation 'org.testcontainers:junit-jupiter'
+	testImplementation 'org.testcontainers:mysql'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+springBoot {
+	mainClass.set('com.cloud.audition.qlikcloudaudition.QlikCloudAuditionApplication')
+}
+
+
+task runQlickCloudAuditionApplication(type: BootRun, dependsOn: 'build') {
+	group 'application'
+	main springBoot.mainClass.get()
+	classpath sourceSets.main.runtimeClasspath
+}

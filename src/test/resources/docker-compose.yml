@@ -1,0 +1,15 @@
+version: '3'
+services:
+  backend-db:
+    container_name: mysql-db
+    build: ./mysql
+    ports:
+      - "3306:3306"
+    restart: always
+  cloud-audition-api:
+    depends_on:
+      - backend-db
+    restart: always
+    image: oscarkowu/qlickcloudaudition:latest
+    ports:
+      - "8080:8080"
