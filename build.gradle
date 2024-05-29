@@ -63,7 +63,7 @@ dependencies {
 	implementation 'net.lbruun.springboot:preliquibase-spring-boot-starter:1.5.0'
 
 	// Database
-	implementation 'com.mysql:mysql-connector-j:8.4.0'
+	runtimeOnly 'org.postgresql:postgresql'
 
 	// Code Utility
 	compileOnly 'org.projectlombok:lombok'
@@ -77,7 +77,7 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-testcontainers'
 	testImplementation 'io.rest-assured:rest-assured'
 	testImplementation 'org.testcontainers:junit-jupiter'
-	testImplementation 'org.testcontainers:mysql'
+	testImplementation 'org.testcontainers:postgresql'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 

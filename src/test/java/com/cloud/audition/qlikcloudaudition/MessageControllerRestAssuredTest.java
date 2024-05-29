@@ -19,7 +19,7 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.containers.MySQLContainer;
+import org.testcontainers.containers.PostgreSQLContainer;
 
 @SpringBootTest(
     classes = QlikCloudAuditionApplication.class,
@@ -28,24 +28,24 @@ public class MessageControllerRestAssuredTest {
 
   @LocalServerPort private Integer port;
 
-  private static final MySQLContainer<?> MY_SQL_CONTAINER =
-      new MySQLContainer<>("mysql:latest").withUsername("root").withPassword("root-password");
+  private static final PostgreSQLContainer<?> postgres =
+      new PostgreSQLContainer<>("postgres:16-alpine");
 
   @DynamicPropertySource
   static void configureProperties(DynamicPropertyRegistry registry) {
-    registry.add("spring.datasource.url", MY_SQL_CONTAINER::getJdbcUrl);
-    registry.add("spring.datasource.username", MY_SQL_CONTAINER::getUsername);
-    registry.add("spring.datasource.password", MY_SQL_CONTAINER::getPassword);
+    registry.add("spring.datasource.url", postgres::getJdbcUrl);
+    registry.add("spring.datasource.username", postgres::getUsername);
+    registry.add("spring.datasource.password", postgres::getPassword);
   }
 
   @BeforeAll
   static void beforeAll() {
-    MY_SQL_CONTAINER.start();
+    postgres.start();
   }
 
   @AfterAll
   static void afterAll() {
-    MY_SQL_CONTAINER.stop();
+    postgres.stop();
   }
 
   @Autowired private MessageRepository messageRepository;
