@@ -16,19 +16,18 @@
 
 - A `MessageController` which will handles message related requests that communicate with the domain via
 - A `MessageService` interface to execute core logic on the data received and communicate with the
-- `MessageRepository` that handle I/O with the database
+- A `MessageRepository` that handle I/O with the database
 
 ## How to run the code in local
 
-1. Fetch the project locally
-2. Locate the `build.gradle` file and run the task `runQlickCloudAuditionApplication`
-   1. Running this task should build and run the application
-
-## REST API Documentation
+There is a docker-compose file under src/test/resources with a sample database for
+testing the app.
 
 Once the application is running the REST API is accessible via these endpoints
 - API Docs: http://localhost:8080/v3/api-docs
 - API UI: http://localhost:8080/swagger-ui/index.html
+
+The API can be tested with a tool like POSTMAN by looking at the api-docs via the specified URL
 
 ## Improvements
 
